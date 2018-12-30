@@ -22,6 +22,14 @@ export type documentTypeNode = {
 export type attributes = {
   [key: string]: string | boolean;
 };
+
+export type mediaState = {
+  paused: boolean;
+  currentTime: number;
+  playbackRate: number;
+  volume: number;
+};
+
 export type elementNode = {
   type: NodeType.Element;
   tagName: string;
@@ -29,6 +37,7 @@ export type elementNode = {
   childNodes: serializedNodeWithId[];
   isSVG?: true;
   needBlock?: boolean;
+  mediaState?: mediaState;
 };
 
 export type textNode = {

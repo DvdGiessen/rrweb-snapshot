@@ -3,6 +3,7 @@ import {
   serializedNodeWithId,
   NodeType,
   attributes,
+  mediaState,
   INode,
   idNodeMap,
 } from './types';
@@ -147,6 +148,29 @@ function serializeNode(n: Node, doc: Document): serializedNode | false {
           attributes.selected = (n as HTMLOptionElement).selected;
         }
       }
+      // media elements
+      let mediaState: mediaState | undefined = undefined;
+      if (
+        tagName === 'audio' ||
+        tagName === 'video'
+      ) {
+        const mediaEl = (n as HTMLMediaElement);
+        // boolean properties
+        for(const prop of ['autoplay', 'controls', 'loop', 'muted']) {
+          if((mediaEl as any)[prop]) {
+            attributes[prop] = true;
+          } else {
+            delete attributes[prop];
+          }
+        }
+        // media playback state
+        mediaState = {
+          paused: mediaEl.paused,
+          currentTime: mediaEl.currentTime,
+          playbackRate: mediaEl.playbackRate,
+          volume: mediaEl.volume,
+        };
+      }
       if (needBlock) {
         const { width, height } = (n as HTMLElement).getBoundingClientRect();
         attributes.rr_width = `${width}px`;
@@ -159,6 +183,7 @@ function serializeNode(n: Node, doc: Document): serializedNode | false {
         childNodes: [],
         isSVG: isSVGElement(n as Element) || undefined,
         needBlock,
+        mediaState: mediaState,
       };
     case n.TEXT_NODE:
       // The parent node may not be a html element which has a tagName attribute.

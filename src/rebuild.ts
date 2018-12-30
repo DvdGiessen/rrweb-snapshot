@@ -123,6 +123,17 @@ function buildNode(n: serializedNodeWithId, doc: Document): Node | null {
           }
         }
       }
+      if (n.mediaState) {
+        const mediaEl = (node as HTMLMediaElement);
+        if (n.mediaState.paused) {
+          mediaEl.pause();
+        } else {
+          mediaEl.play();
+        }
+        mediaEl.currentTime = n.mediaState.currentTime;
+        mediaEl.playbackRate = n.mediaState.playbackRate;
+        mediaEl.volume = n.mediaState.volume;
+      }
       return node;
     case NodeType.Text:
       return doc.createTextNode(
